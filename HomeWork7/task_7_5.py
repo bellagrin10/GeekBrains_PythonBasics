@@ -49,6 +49,6 @@ for root, dirs, files in os.walk(given_folder):
             except FileNotFoundError as e:
                 print(e)
 
-# при работе с  не различаются списки и кортежи: если создадим кортеж - на выходе получим список.
+# при работе с json не различаются списки и кортежи: если создадим кортеж - на выходе получим список.
 with open('task_7_5_summary.json', 'w', encoding='utf-8') as f:
     json.dump(statistics_dict_for_a_given_folder, f)
