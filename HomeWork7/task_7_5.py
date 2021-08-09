@@ -14,7 +14,7 @@
 Сохраните результаты в файл <folder_name>_summary.json в той же папке, где запустили скрипт.
 """
 import os
-
+import json
 
 def files_quantity(st_size, statistics_dict):
     for key in statistics_dict:
@@ -30,7 +30,7 @@ def files_extensions_list(ext, statistics_dict, key):
         statistics_dict[key][1].append(ext)
 
 
-given_folder = os.getcwd()
+given_folder = os.getcwd()   # можно ввести путь до любой папки
 
 limit = 1
 limit_size = [limit := limit * 10 for _ in range(10)]
@@ -49,6 +49,6 @@ for root, dirs, files in os.walk(given_folder):
             except FileNotFoundError as e:
                 print(e)
 
-for k, v in statistics_dict_for_a_given_folder.items():
-    statistics_dict_for_a_given_folder[k] = tuple(v)
-print(statistics_dict_for_a_given_folder)
+# при работе с json не различаются списки и кортежи: если создадим кортеж - на выходе получим список.
+with open('task_7_5_summary.json', 'w', encoding='utf-8') as f:
+    json.dump(statistics_dict_for_a_given_folder, f)
