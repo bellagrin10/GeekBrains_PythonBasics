@@ -39,5 +39,5 @@ def calc_pow(num, power, msg, flag):
     return num ** power
 
 
-print(calc_pow(5, -2, msg='Result:', flag=False))
-print(calc_pow(-2.5, 2, msg='Result:', flag=True))
+print(calc_pow(5, -2, msg='Result', flag=False))
+print(calc_pow(-2.5, 2, msg='Result', flag=True))
