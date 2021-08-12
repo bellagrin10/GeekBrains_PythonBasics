@@ -24,12 +24,11 @@ from functools import wraps
 def type_logger(func):
     @wraps(func)
     def wrapper(*args, **kwargs):
-        args_type = {arg: type(arg) for arg in args}
-        kwargs_type = {kwargs[kwarg]: type(kwargs[kwarg]) for kwarg in kwargs}
-        func_result_type = {func(*args, **kwargs): type(func(*args, **kwargs))}
-        result_types = {**args_type, **kwargs_type, **func_result_type}
-        result = f'{func.__name__}{result_types}'.replace('{', '(').replace('}', ')')
-        return result
+        args_type = [f'{arg}: {type(arg)}' for arg in args]
+        kwargs_type = [f'{kwargs[kwarg]}: {type(kwargs[kwarg])}' for kwarg in kwargs]
+        func_result_type = f'{func(*args, **kwargs)}: {type(func(*args, **kwargs))}'
+        result_types = [*args_type, *kwargs_type, func_result_type]
+        return f"{func.__name__}({', '.join(result_types)})"
     return wrapper
 
 
@@ -40,5 +39,5 @@ def calc_pow(num, power, msg, flag):
     return num ** power
 
 
-print(calc_pow(5, -2, msg='Result:', flag=False))
-print(calc_pow(-2.5, 2, msg='Result:', flag=True))
+print(calc_pow(5, -2, msg='Result', flag=False))
+print(calc_pow(-2.5, 2, msg='Result', flag=True))
