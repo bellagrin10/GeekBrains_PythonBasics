@@ -12,10 +12,14 @@
 
 
 class Clothes:
-    fabric_consumption_of_clothing = {
+    _fabric_consumption_of_clothing = {
         'Coat': 0,
         'Suit': 0
     }
+
+    @property
+    def fabric_consumption_of_clothing(self):
+        return self._fabric_consumption_of_clothing
 
     def __init__(self, args):
         self.args = args
@@ -28,12 +32,12 @@ class Clothes:
 
     def __getitem__(self):
         try:
-            return self.fabric_consumption_of_clothing[self.type_of_clothing]
+            return self._fabric_consumption_of_clothing[self.type_of_clothing]
         except KeyError:
             print('This type of clothing is not found')
 
     def __setitem__(self, value):
-        self.fabric_consumption_of_clothing[self.type_of_clothing] += value
+        self._fabric_consumption_of_clothing[self.type_of_clothing] += value
 
     @property
     def fabric_consumption(self):
@@ -58,15 +62,17 @@ class Suit(Clothes):
 
 
 class ClothesDataInterface:
-    @staticmethod
-    def print_fabric_consumption():
-        for key, value in Clothes.fabric_consumption_of_clothing.items():
+    def __init__(self):
+        self.fabric_consumption_data = Clothes._fabric_consumption_of_clothing
+
+    def print_fabric_consumption(self):
+        for key, value in self.fabric_consumption_data.items():
             print(f'{key}: {value:.2f}')
 
-    @staticmethod
-    def calc_total():
+    @property
+    def calc_total(self):
         total = 0
-        for value in Clothes.fabric_consumption_of_clothing.values():
+        for value in self.fabric_consumption_data.values():
             total += value
         return f'************\nTotal: {total:.2f}'
 
@@ -84,4 +90,4 @@ if __name__ == '__main__':
     print()
     clothes_data = ClothesDataInterface()
     clothes_data.print_fabric_consumption()
-    print(clothes_data.calc_total())
+    print(clothes_data.calc_total)
