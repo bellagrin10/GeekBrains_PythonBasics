@@ -12,14 +12,10 @@
 
 
 class Clothes:
-    _fabric_consumption_of_clothing = {
+    __fabric_consumption_of_clothing = {
         'Coat': 0,
         'Suit': 0
     }
-
-    @property
-    def fabric_consumption_of_clothing(self):
-        return self._fabric_consumption_of_clothing
 
     def __init__(self, args):
         self.args = args
@@ -32,12 +28,12 @@ class Clothes:
 
     def __getitem__(self):
         try:
-            return self._fabric_consumption_of_clothing[self.type_of_clothing]
+            return self.__fabric_consumption_of_clothing[self.type_of_clothing]
         except KeyError:
             print('This type of clothing is not found')
 
     def __setitem__(self, value):
-        self._fabric_consumption_of_clothing[self.type_of_clothing] += value
+        self.__fabric_consumption_of_clothing[self.type_of_clothing] += value
 
     @property
     def fabric_consumption(self):
@@ -52,6 +48,10 @@ class Clothes:
         self.fabric_consumption = calc
         return f'Fabric consumption for {self.type_of_clothing} ({self.args}): {calc:.2f}'
 
+    @staticmethod
+    def fabric_consumption_of_clothing():
+        return Clothes.__fabric_consumption_of_clothing.items()
+
 
 class Coat(Clothes):
     pass
@@ -63,16 +63,16 @@ class Suit(Clothes):
 
 class ClothesDataInterface:
     def __init__(self):
-        self.fabric_consumption_data = Clothes._fabric_consumption_of_clothing
+        self.fabric_consumption_data = Clothes.fabric_consumption_of_clothing()
 
     def print_fabric_consumption(self):
-        for key, value in self.fabric_consumption_data.items():
+        for key, value in self.fabric_consumption_data:
             print(f'{key}: {value:.2f}')
 
     @property
-    def calc_total(self):
+    def total_fabric_consumption(self):
         total = 0
-        for value in self.fabric_consumption_data.values():
+        for key, value in self.fabric_consumption_data:
             total += value
         return f'************\nTotal: {total:.2f}'
 
@@ -90,4 +90,4 @@ if __name__ == '__main__':
     print()
     clothes_data = ClothesDataInterface()
     clothes_data.print_fabric_consumption()
-    print(clothes_data.calc_total)
+    print(clothes_data.total_fabric_consumption)
