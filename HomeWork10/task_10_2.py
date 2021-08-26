@@ -17,7 +17,7 @@ class Clothes:
         'Suit': 0
     }
 
-    def __init__(self, args, total=0):
+    def __init__(self, args):
         self.args = args
         self.FABRIC_CONSUMPTION_FORMULAS = {
             'Coat': f'{self.args / 6.5 + 0.5}',
@@ -25,11 +25,6 @@ class Clothes:
         }
         self.type_of_clothing = self.__class__.__name__
         self.__fabric_consumption = self.__getitem__()
-        self.__total = total
-
-    @property
-    def fabric_consumption(self):
-        return self.__fabric_consumption
 
     def __getitem__(self):
         try:
@@ -40,24 +35,22 @@ class Clothes:
     def __setitem__(self, value):
         self.__fabric_consumption_of_clothing[self.type_of_clothing] += value
 
+    @property
+    def fabric_consumption(self):
+        return self.__fabric_consumption
+
     @fabric_consumption.setter
     def fabric_consumption(self, value):
         self.__setitem__(value)
-
-    def print_fabric_consumption(self):
-        for key, value in self.__fabric_consumption_of_clothing.items():
-            print(f'{key}: {value:.2f}')
-
-    @property
-    def total(self):
-        for value in self.__fabric_consumption_of_clothing.values():
-            self.__total += value
-        return f'Total: {self.__total:.2f}\n************'
 
     def calculation_of_fabric_consumption(self):
         calc = float(self.FABRIC_CONSUMPTION_FORMULAS[self.type_of_clothing])
         self.fabric_consumption = calc
         return f'Fabric consumption for {self.type_of_clothing} ({self.args}): {calc:.2f}'
+
+    @staticmethod
+    def fabric_consumption_of_clothing():
+        return Clothes.__fabric_consumption_of_clothing.items()
 
 
 class Coat(Clothes):
@@ -68,16 +61,33 @@ class Suit(Clothes):
     pass
 
 
+class ClothesDataInterface:
+    def __init__(self):
+        self.fabric_consumption_data = Clothes.fabric_consumption_of_clothing()
+
+    def print_fabric_consumption(self):
+        for key, value in self.fabric_consumption_data:
+            print(f'{key}: {value:.2f}')
+
+    @property
+    def total_fabric_consumption(self):
+        total = 0
+        for key, value in self.fabric_consumption_data:
+            total += value
+        return f'************\nTotal: {total:.2f}'
+
+
 if __name__ == '__main__':
-    coat = Coat(args=40)
-    suit = Suit(args=1.60)
-    print(coat.calculation_of_fabric_consumption())
-    print(suit.calculation_of_fabric_consumption())
-    print()
-    coat1 = Coat(50)
-    suit1 = Suit(1.80)
+    coat1 = Coat(args=40)
+    suit1 = Suit(args=1.60)
     print(coat1.calculation_of_fabric_consumption())
     print(suit1.calculation_of_fabric_consumption())
     print()
-    print(coat.total)
-    coat.print_fabric_consumption()
+    coat2 = Coat(50)
+    suit2 = Suit(1.80)
+    print(coat2.calculation_of_fabric_consumption())
+    print(suit2.calculation_of_fabric_consumption())
+    print()
+    clothes_data = ClothesDataInterface()
+    clothes_data.print_fabric_consumption()
+    print(clothes_data.total_fabric_consumption)
