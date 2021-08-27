@@ -47,12 +47,10 @@ class OfficeEquipmentWarehouse:
 
     @staticmethod
     def valid_data(name, number):
-        try:
-            number = int(number)
-            if name in ['Printer', 'Scanner', 'Copier', 'Fax']:
-                return name, number
-        except ValueError:
-            return None
+        if name in ['Printer', 'Scanner', 'Copier', 'Fax'] and type(number) == int:
+            return name, number
+        else:
+            print('Refine the data. Data is not correct')
 
     def acceptance_of_office_equipment_to_the_warehouse(self, *args):
         for name, number in args:
@@ -64,7 +62,7 @@ class OfficeEquipmentWarehouse:
                     print(f'Capacity of office equipment warehouse {self.capacity} units.\nThe warehouse '
                           f'is unable to accept additional {number_of_units} units of {office_equipment_name}')
             except TypeError:
-                print('Refine the data. Data is not correct')
+                print('Unable to perform the operation of receiving office equipment.')
 
     def transfer_to_a_division_of_the_company(self, company, department, *args):
         for name, number in args:
@@ -73,7 +71,7 @@ class OfficeEquipmentWarehouse:
                 self.number_of_office_equipment_by_department_of_the_company[company][department] += number_of_units
                 self.office_equipment_warehouse_data[office_equipment_name] -= number_of_units
             except TypeError:
-                print('Refine the data. Data is not correct')
+                print('Unable to perform office equipment transfer operation.')
 
 
 class OfficeEquipment:
@@ -142,6 +140,7 @@ stockroom.acceptance_of_office_equipment_to_the_warehouse(('Printer', 50), ('Sca
 stockroom.print_office_equipment()
 print('Total: ', stockroom.total_office_equipment)
 print()
+stockroom.acceptance_of_office_equipment_to_the_warehouse(('Pr', 50))
 stockroom.transfer_to_a_division_of_the_company('My_small_company', 'department1',
                                                 ('Printer', 30), ('Scanner', 20), ('Copier', 10), ('Fax', 5))
 stockroom.transfer_to_a_division_of_the_company('My_big_company', 'department1',
@@ -150,3 +149,4 @@ stockroom.transfer_to_a_division_of_the_company('My_big_company', 'department2',
                                                 ('Printer', 30), ('Scanner', 20), ('Copier', 10), ('Fax', 5))
 stockroom.print_office_equipment_by_department_of_the_company()
 stockroom.print_office_equipment()
+stockroom.transfer_to_a_division_of_the_company('My_big_company', 'department3', ('Printer', '50units'))
