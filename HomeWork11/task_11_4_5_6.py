@@ -46,31 +46,30 @@ class OfficeEquipmentWarehouse:
         return total
 
     @staticmethod
-    def valid_data(name, number):
+    def is_valid_data(name, number):
         if name in ['Printer', 'Scanner', 'Copier', 'Fax'] and type(number) == int:
-            return name, number
+            return True
         else:
             print('Refine the data. Data is not correct')
+            return False
 
     def acceptance_of_office_equipment_to_the_warehouse(self, *args):
-        for name, number in args:
-            try:
-                office_equipment_name, number_of_units = self.valid_data(name, number)
+        for office_equipment_name, number_of_units in args:
+            if self.is_valid_data(office_equipment_name, number_of_units):
                 if (self.total_office_equipment + number_of_units) <= self.capacity:
                     self.office_equipment_warehouse_data[office_equipment_name] += number_of_units
                 else:
                     print(f'Capacity of office equipment warehouse {self.capacity} units.\nThe warehouse '
                           f'is unable to accept additional {number_of_units} units of {office_equipment_name}')
-            except TypeError:
+            else:
                 print('Unable to perform the operation of receiving office equipment.')
 
     def transfer_to_a_division_of_the_company(self, company, department, *args):
-        for name, number in args:
-            try:
-                office_equipment_name, number_of_units = self.valid_data(name, number)
+        for office_equipment_name, number_of_units in args:
+            if self.is_valid_data(office_equipment_name, number_of_units):
                 self.number_of_office_equipment_by_department_of_the_company[company][department] += number_of_units
                 self.office_equipment_warehouse_data[office_equipment_name] -= number_of_units
-            except TypeError:
+            else:
                 print('Unable to perform office equipment transfer operation.')
 
 
