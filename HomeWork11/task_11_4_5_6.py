@@ -14,7 +14,7 @@
 
 
 class OfficeEquipmentWarehouse:
-    number_of_office_equipment_by_department_of_the_company = {
+    data_of_office_equipment_by_department_of_the_company = {
         'My_small_company':
             {'department1': 0, 'department2': 0},
         'My_big_company':
@@ -30,12 +30,21 @@ class OfficeEquipmentWarehouse:
     def __init__(self, capacity_of_office_equipment_units):
         self.capacity = capacity_of_office_equipment_units
 
+    def get_a_list_of_company_names(self):
+        return self.data_of_office_equipment_by_department_of_the_company.keys()
+
+    def get_a_list_of_departments_of_this_company(self, company):
+        return self.data_of_office_equipment_by_department_of_the_company[company].keys()
+
+    def get_a_list_of_office_equipment(self):
+        return self.office_equipment_warehouse_data.keys()
+
     def print_office_equipment(self):
         for key, value in self.office_equipment_warehouse_data.items():
             print(f'{key}: {value}')
 
     def print_office_equipment_by_department_of_the_company(self):
-        for key, value in self.number_of_office_equipment_by_department_of_the_company.items():
+        for key, value in self.data_of_office_equipment_by_department_of_the_company.items():
             print(f'{key}: {value}')
 
     @property
@@ -45,9 +54,14 @@ class OfficeEquipmentWarehouse:
             total += value
         return total
 
-    @staticmethod
-    def is_valid_data(name, number):
-        if name in ['Printer', 'Scanner', 'Copier', 'Fax'] and type(number) == int:
+    def is_valid_data(self, name, number, *args):
+        if args:
+            company_name, department_name = args
+            if company_name not in self.get_a_list_of_company_names() or \
+                    department_name not in self.get_a_list_of_departments_of_this_company(company_name):
+                print('Such company or department is not listed')
+                return False
+        if name in self.get_a_list_of_office_equipment() and type(number) == int:
             return True
         else:
             print('Refine the data. Data is not correct')
@@ -66,8 +80,8 @@ class OfficeEquipmentWarehouse:
 
     def transfer_to_a_division_of_the_company(self, company, department, *args):
         for office_equipment_name, number_of_units in args:
-            if self.is_valid_data(office_equipment_name, number_of_units):
-                self.number_of_office_equipment_by_department_of_the_company[company][department] += number_of_units
+            if self.is_valid_data(office_equipment_name, number_of_units, company, department):
+                self.data_of_office_equipment_by_department_of_the_company[company][department] += number_of_units
                 self.office_equipment_warehouse_data[office_equipment_name] -= number_of_units
             else:
                 print('Unable to perform office equipment transfer operation.')
@@ -140,6 +154,7 @@ stockroom.print_office_equipment()
 print('Total: ', stockroom.total_office_equipment)
 print()
 stockroom.acceptance_of_office_equipment_to_the_warehouse(('Pr', 50))
+print()
 stockroom.transfer_to_a_division_of_the_company('My_small_company', 'department1',
                                                 ('Printer', 30), ('Scanner', 20), ('Copier', 10), ('Fax', 5))
 stockroom.transfer_to_a_division_of_the_company('My_big_company', 'department1',
@@ -148,4 +163,10 @@ stockroom.transfer_to_a_division_of_the_company('My_big_company', 'department2',
                                                 ('Printer', 30), ('Scanner', 20), ('Copier', 10), ('Fax', 5))
 stockroom.print_office_equipment_by_department_of_the_company()
 stockroom.print_office_equipment()
+print('Total: ', stockroom.total_office_equipment)
+print()
 stockroom.transfer_to_a_division_of_the_company('My_big_company', 'department3', ('Printer', '50units'))
+print()
+stockroom.transfer_to_a_division_of_the_company('My_loser_company', 'department1', ('Printer', 20))
+print()
+stockroom.transfer_to_a_division_of_the_company('My_big_company', 'department10', ('Copier', 60))
