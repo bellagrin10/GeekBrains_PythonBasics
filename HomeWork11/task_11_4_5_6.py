@@ -14,17 +14,13 @@
 
 
 class OfficeEquipmentWarehouse:
-    data_of_office_equipment_by_department_of_the_company = {
-        'My_small_company':
-            {'department1': 0, 'department2': 0},
-        'My_big_company':
-            {'department1': 0, 'department2': 0, 'department3': 0, 'department4': 0}
-    }
+    data_of_office_equipment_by_department_of_the_company = dict(My_small_company={'department1': 0, 'department2': 0},
+                                                                 My_big_company={'department1': 0, 'department2': 0,
+                                                                                 'department3': 0, 'department4': 0})
     office_equipment_warehouse_data = {
         'Printer': 400,
-        'Scanner': 200,
         'Copier': 300,
-        'Fax': 100
+        'Scanner': 200
     }
 
     def __init__(self, capacity_of_office_equipment_units):
@@ -68,7 +64,8 @@ class OfficeEquipmentWarehouse:
             return False
 
     def acceptance_of_office_equipment_to_the_warehouse(self, *args):
-        for office_equipment_name, number_of_units in args:
+        for office_equipment, number_of_units in args:
+            office_equipment_name = office_equipment.__class__.__name__
             if self.is_valid_data(office_equipment_name, number_of_units):
                 if (self.total_office_equipment + number_of_units) <= self.capacity:
                     self.office_equipment_warehouse_data[office_equipment_name] += number_of_units
@@ -79,7 +76,8 @@ class OfficeEquipmentWarehouse:
                 print('Unable to perform the operation of receiving office equipment.')
 
     def transfer_to_a_division_of_the_company(self, company, department, *args):
-        for office_equipment_name, number_of_units in args:
+        for office_equipment, number_of_units in args:
+            office_equipment_name = office_equipment.__class__.__name__
             if self.is_valid_data(office_equipment_name, number_of_units, company, department):
                 self.data_of_office_equipment_by_department_of_the_company[company][department] += number_of_units
                 self.office_equipment_warehouse_data[office_equipment_name] -= number_of_units
@@ -88,8 +86,8 @@ class OfficeEquipmentWarehouse:
 
 
 class OfficeEquipment:
-    def __init__(self, printed_form_of_the_information, digital_form_of_the_information, speed, resolution,
-                 color='black_and_white', press_a_button_to_start_the_process=False):
+    def __init__(self, printed_form_of_the_information=False, digital_form_of_the_information=False, speed=50,
+                 resolution=600, color='black_and_white', press_a_button_to_start_the_process=False):
         self.push_a_button = press_a_button_to_start_the_process
         self.speed = speed
         self.print_quality = resolution
@@ -99,10 +97,9 @@ class OfficeEquipment:
 
 
 class Printer(OfficeEquipment):
-    def __init__(self, *args, select_soft_copy_for_process=True, copy_onto='paper', size_of_paper='A4',
-                 number_of_copies=1):
+    def __init__(self, *args, copy_onto='paper', size_of_paper='A4', number_of_copies=1):
         super().__init__(*args)
-        self.select_soft_copy = select_soft_copy_for_process
+        self.soft_copy = True
         self.printer_connectivity_type = ('USB', 'Ethernet', 'Bluetooth')
         self.printer_features = ('automatic_two_sided', 'printing', 'Network_ready', 'CD_printing', 'sticker_printing')
         self.copy_onto = copy_onto
@@ -117,6 +114,7 @@ class Scanner(OfficeEquipment):
     def __init__(self, *args, place_a_hard_copy_on_the_platen=True):
         super().__init__(*args)
         self.control_the_input_settings = True
+        self.hard_copy = True
         self.place_a_hard_copy = place_a_hard_copy_on_the_platen
         self.stores_a_digital_copy = ('on_a_memory_card', 'on_a_USB_device', 'transmits_to_a_computer_via_email',
                                       'transmits_to_a_computer_via_network', 'transmit_wireless_to_portable_devices')
@@ -132,6 +130,7 @@ class Copier(OfficeEquipment):
     def __init__(self, *args, place_a_hard_copy_on_the_platen=True, copy_onto='paper', size_of_paper='A4',
                  number_of_copies=1):
         super().__init__(*args)
+        self.hard_copy = True
         self.place_a_hard_copy = place_a_hard_copy_on_the_platen
         self.copy_onto = copy_onto
         self.size_of_paper = size_of_paper
@@ -141,32 +140,37 @@ class Copier(OfficeEquipment):
         pass
 
 
+printer = Printer()
+scanner = Scanner()
+copier = Copier()
+
 stockroom = OfficeEquipmentWarehouse(1200)
 stockroom.print_office_equipment()
 print('Total: ', stockroom.total_office_equipment)
 print()
-stockroom.acceptance_of_office_equipment_to_the_warehouse(('Printer', 70), ('Scanner', 80), ('Copier', 60), ('Fax', 5))
+stockroom.acceptance_of_office_equipment_to_the_warehouse((printer, 70), (scanner, 800), (copier, 60))
 stockroom.print_office_equipment()
 print('Total: ', stockroom.total_office_equipment)
 print()
-stockroom.acceptance_of_office_equipment_to_the_warehouse(('Printer', 50), ('Scanner', 20), ('Copier', 10), ('Fax', 5))
+stockroom.acceptance_of_office_equipment_to_the_warehouse((printer, 50), (scanner, 20), (copier, 200))
 stockroom.print_office_equipment()
 print('Total: ', stockroom.total_office_equipment)
 print()
-stockroom.acceptance_of_office_equipment_to_the_warehouse(('Pr', 50))
+printer111 = OfficeEquipment()
+stockroom.acceptance_of_office_equipment_to_the_warehouse((printer111, 50))
 print()
 stockroom.transfer_to_a_division_of_the_company('My_small_company', 'department1',
-                                                ('Printer', 30), ('Scanner', 20), ('Copier', 10), ('Fax', 5))
+                                                (printer, 30), (scanner, 20), (copier, 10))
 stockroom.transfer_to_a_division_of_the_company('My_big_company', 'department1',
-                                                ('Printer', 30), ('Scanner', 20), ('Copier', 10), ('Fax', 5))
+                                                (printer, 30), (scanner, 20), (copier, 10))
 stockroom.transfer_to_a_division_of_the_company('My_big_company', 'department2',
-                                                ('Printer', 30), ('Scanner', 20), ('Copier', 10), ('Fax', 5))
+                                                (printer, 30), (scanner, 20), (copier, 10))
 stockroom.print_office_equipment_by_department_of_the_company()
 stockroom.print_office_equipment()
 print('Total: ', stockroom.total_office_equipment)
 print()
-stockroom.transfer_to_a_division_of_the_company('My_big_company', 'department3', ('Printer', '50units'))
+stockroom.transfer_to_a_division_of_the_company('My_big_company', 'department3', (printer, '50units'))
 print()
-stockroom.transfer_to_a_division_of_the_company('My_loser_company', 'department1', ('Printer', 20))
+stockroom.transfer_to_a_division_of_the_company('My_loser_company', 'department1', (printer, 20))
 print()
-stockroom.transfer_to_a_division_of_the_company('My_big_company', 'department10', ('Copier', 60))
+stockroom.transfer_to_a_division_of_the_company('My_big_company', 'department10', (printer, 60))
